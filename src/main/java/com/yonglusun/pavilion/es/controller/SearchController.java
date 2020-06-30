@@ -32,7 +32,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/connect")
-public class SearchElasticSearch {
+public class SearchController {
   static RestHighLevelClient client = new RestHighLevelClient(
       RestClient.builder(
           new HttpHost("localhost", 9200, "http"),
@@ -43,9 +43,10 @@ public class SearchElasticSearch {
   }
 
   @GetMapping("/index/create")
-  public String createIndex(@RequestParam(value = "name") String indexName) {
+  public String createIndex(@RequestParam(value = "name") String indexName) throws IOException {
     CreateIndexRequest request = new CreateIndexRequest(indexName);
     request.settings(Settings.builder().put("index.number_of_shards", 3).put("index.number_of_replicas", 2));
+    client.indices().create(request, RequestOptions.DEFAULT);
     return "ok";
   }
 
